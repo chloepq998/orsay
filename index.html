@@ -24,7 +24,8 @@
       <fieldset>
         <legend>기본 정보</legend>
         <label>출처
-          <input type="text" id="source" placeholder="교재명 / 시험명">
+          <input type="text" id="source" list="sourceSuggestions" placeholder="교재명 / 시험명">
+          <datalist id="sourceSuggestions"></datalist>
         </label>
         <label>번호
           <input type="text" id="problemNumber">
@@ -34,9 +35,14 @@
             <option value="">선택</option>
           </select>
         </label>
-        <label>단원
+        <label>대단원
           <select id="unitSelect">
             <option value="">과목을 먼저 선택하세요</option>
+          </select>
+        </label>
+        <label>소단원
+          <select id="subUnitSelect">
+            <option value="">대단원을 먼저 선택하세요</option>
           </select>
         </label>
       </fieldset>
@@ -56,7 +62,8 @@
         <legend>문제 분석</legend>
 
         <label>핵심 조건 요약
-          <textarea id="keyConditions" rows="2" placeholder="이 문제에서 결정적인 조건은 무엇인가"></textarea>
+          <input type="text" id="keyConditions" list="keyConditionsSuggestions" placeholder="이 문제에서 결정적인 조건은 무엇인가">
+          <datalist id="keyConditionsSuggestions"></datalist>
         </label>
 
         <label>출제 의도
@@ -65,29 +72,34 @@
         </label>
 
         <label>필요한 첫 발상
-          <textarea id="firstApproach" rows="2" placeholder="출제자가 어떤 발상을 유도하는가"></textarea>
+          <input type="text" id="firstApproach" list="firstApproachSuggestions" placeholder="출제자가 어떤 발상을 유도하는가">
+          <datalist id="firstApproachSuggestions"></datalist>
         </label>
 
         <div class="condition-roles">
           <span>조건별 역할</span>
           <div class="cr-inputs">
             <input type="text" id="crCondition" placeholder="조건">
-            <input type="text" id="crRole" placeholder="이 조건의 역할">
+            <input type="text" id="crRole" list="crRoleSuggestions" placeholder="이 조건의 역할">
+            <datalist id="crRoleSuggestions"></datalist>
             <button type="button" id="crAddBtn">추가</button>
           </div>
           <ul id="crList"></ul>
         </div>
 
         <label>주의할 함정
-          <textarea id="trap" rows="2" placeholder="자주 하는 착각은 무엇인가"></textarea>
+          <input type="text" id="trap" list="trapSuggestions" placeholder="자주 하는 착각은 무엇인가">
+          <datalist id="trapSuggestions"></datalist>
         </label>
 
         <label>내가 막힌 지점
-          <textarea id="stuckPoint" rows="2"></textarea>
+          <input type="text" id="stuckPoint" list="stuckPointSuggestions">
+          <datalist id="stuckPointSuggestions"></datalist>
         </label>
 
         <label>틀린 이유 (서술)
-          <textarea id="failureReason" rows="2"></textarea>
+          <input type="text" id="failureReason" list="failureReasonSuggestions">
+          <datalist id="failureReasonSuggestions"></datalist>
         </label>
 
         <label>틀린 이유 분류
@@ -97,7 +109,8 @@
         </label>
 
         <label>다음에 비슷한 문제를 보면 볼 신호
-          <textarea id="nextSignal" rows="2"></textarea>
+          <input type="text" id="nextSignal" list="nextSignalSuggestions">
+          <datalist id="nextSignalSuggestions"></datalist>
         </label>
 
         <div class="tag-picker">

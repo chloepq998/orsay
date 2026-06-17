@@ -3,6 +3,8 @@ import { FAILURE_CATEGORIES, UNIT_STRUCTURE } from './constants.js';
 import { renderTagCheckboxes, getSelectedTags } from './tagPicker.js';
 import { initOcr } from './ocr.js';
 import { initAiAnalyze } from './aiAnalyze.js';
+import { fieldSuggestions, roleSuggestions } from './suggestions.js';
+import { escapeHtml } from './utils.js';
 
 export function initRecordForm({ onSaved }) {
   const form = document.getElementById('recordForm');
@@ -22,6 +24,7 @@ export function initRecordForm({ onSaved }) {
 
   const subjectSelect = document.getElementById('subjectSelect');
   const unitSelect = document.getElementById('unitSelect');
+  const subUnitSelect = document.getElementById('subUnitSelect');
   Object.keys(UNIT_STRUCTURE).forEach(subject => {
     const opt = document.createElement('option');
     opt.value = subject;
@@ -29,14 +32,23 @@ export function initRecordForm({ onSaved }) {
     subjectSelect.appendChild(opt);
   });
 
-  function populateUnitOptions(subject, selectedUnit) {
-    const units = UNIT_STRUCTURE[subject] || [];
+  function populateUnitOptions(subject, selectedUnit, selectedSubUnit) {
+    const units = Object.keys(UNIT_STRUCTURE[subject] || {});
     unitSelect.innerHTML = '<option value="">선택</option>' +
       units.map(u => `<option value="${u}">${u}</option>`).join('');
     if (selectedUnit) unitSelect.value = selectedUnit;
+    populateSubUnitOptions(subject, unitSelect.value, selectedSubUnit);
+  }
+
+  function populateSubUnitOptions(subject, unit, selectedSubUnit) {
+    const subUnits = (UNIT_STRUCTURE[subject] || {})[unit] || [];
+    subUnitSelect.innerHTML = '<option value="">선택</option>' +
+      subUnits.map(su => `<option value="${su}">${su}</option>`).join('');
+    if (selectedSubUnit) subUnitSelect.value = selectedSubUnit;
   }
 
   subjectSelect.addEventListener('change', () => populateUnitOptions(subjectSelect.value));
+  unitSelect.addEventListener('change', () => populateSubUnitOptions(subjectSelect.value, unitSelect.value));
 
   initOcr({
     fileInput: document.getElementById('ocrInput'),
@@ -102,6 +114,7 @@ export function initRecordForm({ onSaved }) {
     conditionRoles = [];
     renderCrList();
     unitSelect.innerHTML = '<option value="">과목을 먼저 선택하세요</option>';
+    subUnitSelect.innerHTML = '<option value="">대단원을 먼저 선택하세요</option>';
     document.getElementById('ocrScratch').value = '';
     document.getElementById('ocrStatus').textContent = '';
     document.getElementById('aiStatus').textContent = '';
@@ -109,15 +122,32 @@ export function initRecordForm({ onSaved }) {
     setFormMode(false);
   }
 
+  function populateDatalist(id, values) {
+    document.getElementById(id).innerHTML = values.map(v => `<option value="${escapeHtml(v)}"></option>`).join('');
+  }
+
+  function refreshSuggestions() {
+    populateDatalist('sourceSuggestions', fieldSuggestions('source'));
+    populateDatalist('keyConditionsSuggestions', fieldSuggestions('keyConditions'));
+    populateDatalist('firstApproachSuggestions', fieldSuggestions('firstApproach'));
+    populateDatalist('trapSuggestions', fieldSuggestions('trap'));
+    populateDatalist('stuckPointSuggestions', fieldSuggestions('stuckPoint'));
+    populateDatalist('failureReasonSuggestions', fieldSuggestions('failureReason'));
+    populateDatalist('nextSignalSuggestions', fieldSuggestions('nextSignal'));
+    populateDatalist('crRoleSuggestions', roleSuggestions());
+  }
+
+  refreshSuggestions();
+
   cancelBtn.addEventListener('click', resetForm);
 
   function startEditing(record) {
     editingId = record.id;
     document.getElementById('source').value = record.source || '';
     document.getElementById('problemNumber').value = record.problemNumber || '';
-    const [recordSubject, recordUnit] = (record.unit || '').split(' - ');
+    const [recordSubject, recordUnit, recordSubUnit] = (record.unit || '').split(' - ');
     subjectSelect.value = recordSubject || '';
-    populateUnitOptions(recordSubject, recordUnit);
+    populateUnitOptions(recordSubject, recordUnit, recordSubUnit);
     document.getElementById('keyConditions').value = record.keyConditions || '';
 
     const firstIntentId = (record.intentPatternIds || [])[0];
@@ -146,9 +176,8 @@ export function initRecordForm({ onSaved }) {
     const intentLabel = document.getElementById('intentInput').value.trim();
     const intentPatternIds = intentLabel ? [intentStorage.resolve(intentLabel)] : [];
 
-    const unit = subjectSelect.value && unitSelect.value
-      ? `${subjectSelect.value} - ${unitSelect.value}`
-      : (subjectSelect.value || '');
+    const unitParts = [subjectSelect.value, unitSelect.value, subUnitSelect.value].filter(Boolean);
+    const unit = unitParts.join(' - ');
 
     const fields = {
       source: document.getElementById('source').value.trim(),
@@ -180,6 +209,7 @@ export function initRecordForm({ onSaved }) {
 
     const wasEditing = !!editingId;
     resetForm();
+    refreshSuggestions();
 
     const statusEl = document.getElementById('saveStatus');
     statusEl.textContent = wasEditing ? '수정되었습니다.' : '저장되었습니다.';
