@@ -2,6 +2,7 @@ import { recordStorage, intentStorage } from './storage.js';
 import { FAILURE_CATEGORIES, UNIT_STRUCTURE } from './constants.js';
 import { renderTagCheckboxes, getSelectedTags } from './tagPicker.js';
 import { initOcr } from './ocr.js';
+import { initAiAnalyze } from './aiAnalyze.js';
 
 export function initRecordForm({ onSaved }) {
   const form = document.getElementById('recordForm');
@@ -41,6 +42,22 @@ export function initRecordForm({ onSaved }) {
     fileInput: document.getElementById('ocrInput'),
     scratchArea: document.getElementById('ocrScratch'),
     statusEl: document.getElementById('ocrStatus')
+  });
+
+  initAiAnalyze({
+    fileInput: document.getElementById('ocrInput'),
+    button: document.getElementById('aiAnalyzeBtn'),
+    statusEl: document.getElementById('aiStatus'),
+    onResult: (data) => {
+      if (data.intent) document.getElementById('intentInput').value = data.intent;
+      if (data.firstApproach) document.getElementById('firstApproach').value = data.firstApproach;
+      if (data.guideline) document.getElementById('nextSignal').value = data.guideline;
+      if (Array.isArray(data.tags)) {
+        tagContainer.querySelectorAll('input[name=tag]').forEach(cb => {
+          cb.checked = data.tags.includes(cb.value);
+        });
+      }
+    }
   });
 
   let conditionRoles = [];
@@ -87,6 +104,7 @@ export function initRecordForm({ onSaved }) {
     unitSelect.innerHTML = '<option value="">과목을 먼저 선택하세요</option>';
     document.getElementById('ocrScratch').value = '';
     document.getElementById('ocrStatus').textContent = '';
+    document.getElementById('aiStatus').textContent = '';
     editingId = null;
     setFormMode(false);
   }
