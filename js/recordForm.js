@@ -3,6 +3,7 @@ import { FAILURE_CATEGORIES, UNIT_STRUCTURE } from './constants.js';
 import { renderTagCheckboxes, getSelectedTags } from './tagPicker.js';
 import { initOcr } from './ocr.js';
 import { initAiAnalyze } from './aiAnalyze.js';
+import { fetchConditionHint } from './conditionHint.js';
 import { fieldSuggestions, roleSuggestions } from './suggestions.js';
 import { escapeHtml } from './utils.js';
 
@@ -69,6 +70,14 @@ export function initRecordForm({ onSaved }) {
           cb.checked = data.tags.includes(cb.value);
         });
       }
+      if (Array.isArray(data.conditions)) {
+        data.conditions.forEach(c => {
+          if (c && !conditionRoles.some(cr => cr.condition === c)) {
+            conditionRoles.push({ condition: c, role: '' });
+          }
+        });
+        renderCrList();
+      }
     }
   });
 
@@ -77,11 +86,17 @@ export function initRecordForm({ onSaved }) {
   const crList = document.getElementById('crList');
   const crCondition = document.getElementById('crCondition');
   const crRole = document.getElementById('crRole');
+  const crHintStatus = document.getElementById('crHintStatus');
 
   function renderCrList() {
     crList.innerHTML = conditionRoles.map((cr, i) => `
-      <li>${cr.condition} → ${cr.role}
-        <button type="button" data-i="${i}" class="cr-remove">삭제</button>
+      <li>
+        <div class="cr-condition">${escapeHtml(cr.condition)}</div>
+        <div class="cr-role-row">
+          <input type="text" class="cr-role-input" data-i="${i}" list="crRoleSuggestions" value="${escapeHtml(cr.role || '')}" placeholder="이 조건의 역할">
+          <button type="button" class="cr-hint-btn" data-i="${i}">AI 힌트</button>
+          <button type="button" class="cr-remove" data-i="${i}">삭제</button>
+        </div>
       </li>
     `).join('');
   }
@@ -89,17 +104,43 @@ export function initRecordForm({ onSaved }) {
   document.getElementById('crAddBtn').addEventListener('click', () => {
     const condition = crCondition.value.trim();
     const role = crRole.value.trim();
-    if (!condition || !role) return;
+    if (!condition) return;
     conditionRoles.push({ condition, role });
     crCondition.value = '';
     crRole.value = '';
     renderCrList();
   });
 
-  crList.addEventListener('click', (e) => {
+  crList.addEventListener('input', (e) => {
+    if (e.target.classList.contains('cr-role-input')) {
+      conditionRoles[Number(e.target.dataset.i)].role = e.target.value;
+    }
+  });
+
+  crList.addEventListener('click', async (e) => {
     if (e.target.classList.contains('cr-remove')) {
       conditionRoles.splice(Number(e.target.dataset.i), 1);
       renderCrList();
+      return;
+    }
+
+    if (e.target.classList.contains('cr-hint-btn')) {
+      const i = Number(e.target.dataset.i);
+      const btn = e.target;
+      const input = crList.querySelector(`.cr-role-input[data-i="${i}"]`);
+      btn.disabled = true;
+      btn.textContent = '분석 중...';
+      crHintStatus.textContent = '';
+      try {
+        const role = await fetchConditionHint(conditionRoles[i].condition, document.getElementById('ocrInput'));
+        conditionRoles[i].role = role;
+        input.value = role;
+      } catch (err) {
+        crHintStatus.textContent = '힌트 요청 실패: ' + err.message;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'AI 힌트';
+      }
     }
   });
 
@@ -118,6 +159,7 @@ export function initRecordForm({ onSaved }) {
     document.getElementById('ocrScratch').value = '';
     document.getElementById('ocrStatus').textContent = '';
     document.getElementById('aiStatus').textContent = '';
+    crHintStatus.textContent = '';
     editingId = null;
     setFormMode(false);
   }

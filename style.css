@@ -100,8 +100,43 @@ input[type="text"], textarea, select {
 .cr-inputs input { width: auto; flex: 1; }
 
 #crList {
-  padding-left: 1.2rem;
+  list-style: none;
+  padding: 0;
   font-size: .9rem;
+}
+
+#crList li {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: .5rem;
+  margin-bottom: .5rem;
+  background: #fff;
+}
+
+.cr-condition {
+  font-weight: 600;
+  margin-bottom: .35rem;
+}
+
+.cr-role-row {
+  display: flex;
+  gap: .4rem;
+}
+
+.cr-role-input { width: auto; flex: 1; }
+
+.cr-hint-btn, .cr-remove {
+  padding: .3rem .6rem;
+  border: 1px solid #999;
+  background: #fff;
+  cursor: pointer;
+  font-size: .8rem;
+  white-space: nowrap;
+}
+
+.cr-remove {
+  border-color: #c33;
+  color: #c33;
 }
 
 .status-text {

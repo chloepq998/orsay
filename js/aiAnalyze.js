@@ -1,28 +1,9 @@
-function fileToResizedBase64(file, maxDim = 1280) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error('이미지를 읽을 수 없습니다.'));
-    reader.onload = () => {
-      const img = new Image();
-      img.onerror = () => reject(new Error('이미지를 불러올 수 없습니다.'));
-      img.onload = () => {
-        let { width, height } = img;
-        if (width > maxDim || height > maxDim) {
-          const scale = maxDim / Math.max(width, height);
-          width = Math.round(width * scale);
-          height = Math.round(height * scale);
-        }
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-        resolve({ base64: dataUrl.split(',')[1], mediaType: 'image/jpeg' });
-      };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  });
+import { fileToResizedBase64 } from './imageUtils.js';
+
+let lastImage = null;
+
+export function getLastAnalyzedImage() {
+  return lastImage;
 }
 
 export function initAiAnalyze({ fileInput, button, statusEl, onResult }) {
@@ -37,11 +18,12 @@ export function initAiAnalyze({ fileInput, button, statusEl, onResult }) {
     statusEl.textContent = 'AI가 분석 중입니다...';
 
     try {
-      const { base64, mediaType } = await fileToResizedBase64(file);
+      const image = await fileToResizedBase64(file);
+      lastImage = image;
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64, mediaType })
+        body: JSON.stringify({ imageBase64: image.base64, mediaType: image.mediaType })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'AI 분석에 실패했습니다.');

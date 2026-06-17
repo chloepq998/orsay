@@ -11,7 +11,8 @@ const PROMPT = `다음은 수학 문제 사진입니다. 이 문제를 풀거나
   "intent": "이 문제가 묻는 핵심 개념/발상 (한 문장)",
   "firstApproach": "이 문제에 접근하기 위해 가장 먼저 떠올려야 하는 발상 (한 문장)",
   "guideline": "유사한 문제를 풀 때 무엇을 먼저 확인해야 하는지에 대한 가이드라인 (1~2문장)",
-  "tags": ["아래 태그 목록 중 이 문제에 해당하는 것만 선택"]
+  "tags": ["아래 태그 목록 중 이 문제에 해당하는 것만 선택"],
+  "conditions": ["문제에 주어진 조건을 각각 한 문장씩 나열 (조건의 역할이나 풀이는 포함하지 말 것)"]
 }
 
 사용 가능한 태그 목록: ${IDEA_TAGS.join(', ')}`;
@@ -72,6 +73,9 @@ export default async function handler(req, res) {
     }
 
     parsed.tags = Array.isArray(parsed.tags) ? parsed.tags.filter(t => IDEA_TAGS.includes(t)) : [];
+    parsed.conditions = Array.isArray(parsed.conditions)
+      ? parsed.conditions.map(c => (c || '').toString().trim()).filter(Boolean)
+      : [];
     res.status(200).json(parsed);
   } catch (err) {
     res.status(500).json({ error: err.message });

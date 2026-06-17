@@ -77,14 +77,15 @@
         </label>
 
         <div class="condition-roles">
-          <span>조건별 역할</span>
+          <span>조건별 역할 (사진을 AI로 분석하면 조건이 자동으로 채워집니다)</span>
           <div class="cr-inputs">
-            <input type="text" id="crCondition" placeholder="조건">
+            <input type="text" id="crCondition" placeholder="조건 직접 추가">
             <input type="text" id="crRole" list="crRoleSuggestions" placeholder="이 조건의 역할">
             <datalist id="crRoleSuggestions"></datalist>
             <button type="button" id="crAddBtn">추가</button>
           </div>
           <ul id="crList"></ul>
+          <p id="crHintStatus" class="status-text"></p>
         </div>
 
         <label>주의할 함정
