@@ -6,6 +6,9 @@ import { initOcr } from './ocr.js';
 export function initRecordForm({ onSaved }) {
   const form = document.getElementById('recordForm');
   const tagContainer = document.getElementById('tagContainer');
+  const formModeTitle = document.getElementById('formModeTitle');
+  const submitBtn = document.getElementById('submitBtn');
+  const cancelBtn = document.getElementById('cancelEditBtn');
   renderTagCheckboxes(tagContainer);
 
   const failureSelect = document.getElementById('failureCategory');
@@ -23,6 +26,7 @@ export function initRecordForm({ onSaved }) {
   });
 
   let conditionRoles = [];
+  let editingId = null;
   const crList = document.getElementById('crList');
   const crCondition = document.getElementById('crCondition');
   const crRole = document.getElementById('crRole');
@@ -52,19 +56,61 @@ export function initRecordForm({ onSaved }) {
     }
   });
 
+  function setFormMode(isEditing) {
+    formModeTitle.textContent = isEditing ? '문제 기록 수정' : '문제 기록 입력';
+    submitBtn.textContent = isEditing ? '수정 저장' : '저장';
+    cancelBtn.style.display = isEditing ? 'inline-block' : 'none';
+  }
+
+  function resetForm() {
+    form.reset();
+    conditionRoles = [];
+    renderCrList();
+    document.getElementById('ocrScratch').value = '';
+    document.getElementById('ocrStatus').textContent = '';
+    editingId = null;
+    setFormMode(false);
+  }
+
+  cancelBtn.addEventListener('click', resetForm);
+
+  function startEditing(record) {
+    editingId = record.id;
+    document.getElementById('source').value = record.source || '';
+    document.getElementById('problemNumber').value = record.problemNumber || '';
+    document.getElementById('unit').value = record.unit || '';
+    document.getElementById('keyConditions').value = record.keyConditions || '';
+
+    const firstIntentId = (record.intentPatternIds || [])[0];
+    document.getElementById('intentInput').value = firstIntentId ? (intentStorage.getById(firstIntentId)?.label || '') : '';
+
+    document.getElementById('firstApproach').value = record.firstApproach || '';
+    conditionRoles = (record.conditionRoles || []).map(cr => ({ ...cr }));
+    renderCrList();
+    document.getElementById('trap').value = record.trap || '';
+    document.getElementById('stuckPoint').value = record.stuckPoint || '';
+    document.getElementById('failureReason').value = record.failureReason || '';
+    failureSelect.value = record.failureCategory || '';
+    document.getElementById('nextSignal').value = record.nextSignal || '';
+    document.getElementById('needsReview').checked = !!record.needsReview;
+
+    tagContainer.querySelectorAll('input[name=tag]').forEach(cb => {
+      cb.checked = (record.tags || []).includes(cb.value);
+    });
+
+    setFormMode(true);
+  }
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const intentLabel = document.getElementById('intentInput').value.trim();
     const intentPatternIds = intentLabel ? [intentStorage.resolve(intentLabel)] : [];
 
-    const record = {
-      id: crypto.randomUUID(),
+    const fields = {
       source: document.getElementById('source').value.trim(),
       problemNumber: document.getElementById('problemNumber').value.trim(),
       unit: document.getElementById('unit').value.trim(),
-      createdAt: new Date().toISOString(),
-      reviewedAt: null,
       keyConditions: document.getElementById('keyConditions').value.trim(),
       intentPatternIds,
       firstApproach: document.getElementById('firstApproach').value.trim(),
@@ -78,18 +124,26 @@ export function initRecordForm({ onSaved }) {
       tags: getSelectedTags(tagContainer)
     };
 
-    recordStorage.add(record);
+    if (editingId) {
+      recordStorage.update(editingId, fields);
+    } else {
+      recordStorage.add({
+        id: crypto.randomUUID(),
+        createdAt: new Date().toISOString(),
+        reviewedAt: null,
+        ...fields
+      });
+    }
 
-    form.reset();
-    conditionRoles = [];
-    renderCrList();
-    document.getElementById('ocrScratch').value = '';
-    document.getElementById('ocrStatus').textContent = '';
+    const wasEditing = !!editingId;
+    resetForm();
 
     const statusEl = document.getElementById('saveStatus');
-    statusEl.textContent = '저장되었습니다.';
+    statusEl.textContent = wasEditing ? '수정되었습니다.' : '저장되었습니다.';
     setTimeout(() => { statusEl.textContent = ''; }, 2000);
 
     if (onSaved) onSaved();
   });
+
+  return { startEditing };
 }

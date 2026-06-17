@@ -110,6 +110,12 @@ input[type="text"], textarea, select {
   min-height: 1.2em;
 }
 
+.form-actions {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+
 button[type="submit"] {
   padding: .6rem 1.2rem;
   background: #333;
@@ -117,6 +123,79 @@ button[type="submit"] {
   border: none;
   cursor: pointer;
   font-size: 1rem;
+}
+
+.cancel-btn {
+  display: none;
+  padding: .6rem 1.2rem;
+  background: #fff;
+  border: 1px solid #999;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.card-actions {
+  display: flex;
+  gap: .5rem;
+  margin-top: .6rem;
+}
+
+.card-actions button {
+  padding: .35rem .7rem;
+  border: 1px solid #999;
+  background: #fff;
+  cursor: pointer;
+  font-size: .85rem;
+}
+
+.card-actions .delete-btn {
+  border-color: #c33;
+  color: #c33;
+}
+
+.stats-controls {
+  margin-bottom: .8rem;
+  font-size: .9rem;
+}
+
+.stats-controls select {
+  width: auto;
+  display: inline-block;
+}
+
+.stats-summary {
+  font-size: .9rem;
+  color: #555;
+}
+
+.bar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.bar-list li {
+  margin-bottom: .5rem;
+}
+
+.bar-label {
+  display: block;
+  font-size: .85rem;
+  margin-bottom: .2rem;
+}
+
+.bar-track {
+  display: block;
+  background: #e5e5e5;
+  height: .6rem;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  background: #333;
 }
 
 .record-card {

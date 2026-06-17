@@ -19,3 +19,7 @@ export const FAILURE_CATEGORIES = [
   { value: 'GRAPH_MISREAD', label: '그래프 해석 실패' },
   { value: 'OTHER', label: '기타' }
 ];
+
+export function failureCategoryLabel(value) {
+  return FAILURE_CATEGORIES.find(c => c.value === value)?.label || value;
+}

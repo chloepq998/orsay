@@ -41,6 +41,9 @@ export const intentStorage = {
     const target = label.trim().toLowerCase();
     return readAll(INTENTS_KEY).find(p => p.label.trim().toLowerCase() === target) || null;
   },
+  getById(id) {
+    return readAll(INTENTS_KEY).find(p => p.id === id) || null;
+  },
   incrementUsage(id) {
     const all = readAll(INTENTS_KEY);
     const idx = all.findIndex(p => p.id === id);

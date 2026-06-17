@@ -19,6 +19,7 @@
 
 <main>
   <section id="screen-input" class="screen active">
+    <h2 id="formModeTitle">문제 기록 입력</h2>
     <form id="recordForm">
       <fieldset>
         <legend>기본 정보</legend>
@@ -101,7 +102,10 @@
         </label>
       </fieldset>
 
-      <button type="submit">저장</button>
+      <div class="form-actions">
+        <button type="submit" id="submitBtn">저장</button>
+        <button type="button" id="cancelEditBtn" class="cancel-btn">취소</button>
+      </div>
       <p id="saveStatus" class="status-text"></p>
     </form>
   </section>
@@ -113,12 +117,23 @@
 
   <section id="screen-stats" class="screen">
     <h2>약점 통계</h2>
-    <p class="stub-note">다음 단계에서 구현됩니다.</p>
+    <div class="stats-controls">
+      <label>최근
+        <select id="statsLimit">
+          <option value="10">10</option>
+          <option value="20" selected>20</option>
+          <option value="30">30</option>
+          <option value="all">전체</option>
+        </select>
+        개 기준
+      </label>
+    </div>
+    <div id="statsContent"></div>
   </section>
 
   <section id="screen-review" class="screen">
     <h2>복습 목록</h2>
-    <p class="stub-note">다음 단계에서 구현됩니다.</p>
+    <div id="reviewList"></div>
   </section>
 </main>
 
