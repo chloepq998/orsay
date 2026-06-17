@@ -1,5 +1,5 @@
 import { recordStorage, intentStorage } from './storage.js';
-import { FAILURE_CATEGORIES } from './constants.js';
+import { FAILURE_CATEGORIES, UNIT_STRUCTURE } from './constants.js';
 import { renderTagCheckboxes, getSelectedTags } from './tagPicker.js';
 import { initOcr } from './ocr.js';
 
@@ -18,6 +18,24 @@ export function initRecordForm({ onSaved }) {
     opt.textContent = fc.label;
     failureSelect.appendChild(opt);
   });
+
+  const subjectSelect = document.getElementById('subjectSelect');
+  const unitSelect = document.getElementById('unitSelect');
+  Object.keys(UNIT_STRUCTURE).forEach(subject => {
+    const opt = document.createElement('option');
+    opt.value = subject;
+    opt.textContent = subject;
+    subjectSelect.appendChild(opt);
+  });
+
+  function populateUnitOptions(subject, selectedUnit) {
+    const units = UNIT_STRUCTURE[subject] || [];
+    unitSelect.innerHTML = '<option value="">선택</option>' +
+      units.map(u => `<option value="${u}">${u}</option>`).join('');
+    if (selectedUnit) unitSelect.value = selectedUnit;
+  }
+
+  subjectSelect.addEventListener('change', () => populateUnitOptions(subjectSelect.value));
 
   initOcr({
     fileInput: document.getElementById('ocrInput'),
@@ -66,6 +84,7 @@ export function initRecordForm({ onSaved }) {
     form.reset();
     conditionRoles = [];
     renderCrList();
+    unitSelect.innerHTML = '<option value="">과목을 먼저 선택하세요</option>';
     document.getElementById('ocrScratch').value = '';
     document.getElementById('ocrStatus').textContent = '';
     editingId = null;
@@ -78,7 +97,9 @@ export function initRecordForm({ onSaved }) {
     editingId = record.id;
     document.getElementById('source').value = record.source || '';
     document.getElementById('problemNumber').value = record.problemNumber || '';
-    document.getElementById('unit').value = record.unit || '';
+    const [recordSubject, recordUnit] = (record.unit || '').split(' - ');
+    subjectSelect.value = recordSubject || '';
+    populateUnitOptions(recordSubject, recordUnit);
     document.getElementById('keyConditions').value = record.keyConditions || '';
 
     const firstIntentId = (record.intentPatternIds || [])[0];
@@ -107,10 +128,14 @@ export function initRecordForm({ onSaved }) {
     const intentLabel = document.getElementById('intentInput').value.trim();
     const intentPatternIds = intentLabel ? [intentStorage.resolve(intentLabel)] : [];
 
+    const unit = subjectSelect.value && unitSelect.value
+      ? `${subjectSelect.value} - ${unitSelect.value}`
+      : (subjectSelect.value || '');
+
     const fields = {
       source: document.getElementById('source').value.trim(),
       problemNumber: document.getElementById('problemNumber').value.trim(),
-      unit: document.getElementById('unit').value.trim(),
+      unit,
       keyConditions: document.getElementById('keyConditions').value.trim(),
       intentPatternIds,
       firstApproach: document.getElementById('firstApproach').value.trim(),

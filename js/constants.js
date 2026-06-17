@@ -11,6 +11,12 @@ export const IDEA_TAGS = [
   '역추적형'
 ];
 
+export const UNIT_STRUCTURE = {
+  '대수': ['지수함수와 로그함수', '삼각함수', '수열'],
+  '미적분': ['함수의 극한과 연속', '미분', '적분'],
+  '확률과 통계': ['경우의 수', '확률', '통계']
+};
+
 export const FAILURE_CATEGORIES = [
   { value: 'CONDITION_MISREAD', label: '조건 해석 실수' },
   { value: 'APPROACH_FAIL', label: '첫 발상 실패' },
