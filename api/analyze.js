@@ -8,6 +8,7 @@ const PROMPT = `다음은 수학 문제 사진입니다. 이 문제를 풀거나
 오직 아래 JSON 형식으로만 답하세요. JSON 외의 텍스트는 출력하지 마세요.
 
 {
+  "rawText": "사진에 적힌 문제 텍스트를 숫자, 기호, 수식까지 최대한 정확하게 그대로 옮겨 적은 것 (해석하거나 풀지 말고 받아 적기만 할 것)",
   "intent": "이 문제가 묻는 핵심 개념/발상 (한 문장)",
   "firstApproach": "이 문제에 접근하기 위해 가장 먼저 떠올려야 하는 발상 (한 문장)",
   "guideline": "유사한 문제를 풀 때 무엇을 먼저 확인해야 하는지에 대한 가이드라인 (1~2문장)",
@@ -45,7 +46,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6',
-        max_tokens: 600,
+        max_tokens: 1000,
         messages: [{
           role: 'user',
           content: [
@@ -72,6 +73,7 @@ export default async function handler(req, res) {
       return;
     }
 
+    parsed.rawText = (parsed.rawText || '').toString().trim();
     parsed.tags = Array.isArray(parsed.tags) ? parsed.tags.filter(t => IDEA_TAGS.includes(t)) : [];
     parsed.conditions = Array.isArray(parsed.conditions)
       ? parsed.conditions.map(c => (c || '').toString().trim()).filter(Boolean)

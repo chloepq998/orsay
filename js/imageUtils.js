@@ -1,4 +1,4 @@
-export function fileToResizedBase64(file, maxDim = 1280) {
+export function fileToResizedBase64(file, maxDim = 1568) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error('이미지를 읽을 수 없습니다.'));
@@ -16,7 +16,7 @@ export function fileToResizedBase64(file, maxDim = 1280) {
         canvas.width = width;
         canvas.height = height;
         canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
         resolve({ base64: dataUrl.split(',')[1], mediaType: 'image/jpeg' });
       };
       img.src = reader.result;

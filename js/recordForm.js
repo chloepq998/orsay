@@ -1,7 +1,6 @@
 import { recordStorage, intentStorage } from './storage.js';
 import { FAILURE_CATEGORIES, UNIT_STRUCTURE } from './constants.js';
 import { renderTagCheckboxes, getSelectedTags } from './tagPicker.js';
-import { initOcr } from './ocr.js';
 import { initAiAnalyze } from './aiAnalyze.js';
 import { fetchConditionHint } from './conditionHint.js';
 import { fieldSuggestions, roleSuggestions } from './suggestions.js';
@@ -51,17 +50,12 @@ export function initRecordForm({ onSaved }) {
   subjectSelect.addEventListener('change', () => populateUnitOptions(subjectSelect.value));
   unitSelect.addEventListener('change', () => populateSubUnitOptions(subjectSelect.value, unitSelect.value));
 
-  initOcr({
-    fileInput: document.getElementById('ocrInput'),
-    scratchArea: document.getElementById('ocrScratch'),
-    statusEl: document.getElementById('ocrStatus')
-  });
-
   initAiAnalyze({
     fileInput: document.getElementById('ocrInput'),
     button: document.getElementById('aiAnalyzeBtn'),
     statusEl: document.getElementById('aiStatus'),
     onResult: (data) => {
+      if (data.rawText) document.getElementById('ocrScratch').value = data.rawText;
       if (data.intent) document.getElementById('intentInput').value = data.intent;
       if (data.firstApproach) document.getElementById('firstApproach').value = data.firstApproach;
       if (data.guideline) document.getElementById('nextSignal').value = data.guideline;
@@ -157,7 +151,6 @@ export function initRecordForm({ onSaved }) {
     unitSelect.innerHTML = '<option value="">과목을 먼저 선택하세요</option>';
     subUnitSelect.innerHTML = '<option value="">대단원을 먼저 선택하세요</option>';
     document.getElementById('ocrScratch').value = '';
-    document.getElementById('ocrStatus').textContent = '';
     document.getElementById('aiStatus').textContent = '';
     crHintStatus.textContent = '';
     editingId = null;
