@@ -1,0 +1,14 @@
+{
+  "name": "수학 문제 분석 기록",
+  "short_name": "문제분석",
+  "description": "내가 푼 수학 문제의 출제 의도와 실수 패턴을 기록하고 분석합니다.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f6f9",
+  "theme_color": "#2f6fed",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
