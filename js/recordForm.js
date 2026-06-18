@@ -55,7 +55,6 @@ export function initRecordForm({ onSaved }) {
     button: document.getElementById('aiAnalyzeBtn'),
     statusEl: document.getElementById('aiStatus'),
     onResult: (data) => {
-      if (data.rawText) document.getElementById('ocrScratch').value = data.rawText;
       if (data.intent) document.getElementById('intentInput').value = data.intent;
       if (data.firstApproach) document.getElementById('firstApproach').value = data.firstApproach;
       if (data.guideline) document.getElementById('nextSignal').value = data.guideline;
@@ -150,7 +149,6 @@ export function initRecordForm({ onSaved }) {
     renderCrList();
     unitSelect.innerHTML = '<option value="">과목을 먼저 선택하세요</option>';
     subUnitSelect.innerHTML = '<option value="">대단원을 먼저 선택하세요</option>';
-    document.getElementById('ocrScratch').value = '';
     document.getElementById('aiStatus').textContent = '';
     crHintStatus.textContent = '';
     editingId = null;

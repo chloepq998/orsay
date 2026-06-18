@@ -48,11 +48,10 @@
       </fieldset>
 
       <fieldset>
-        <legend>사진으로 문제 읽기 (참고용 — 저장되지 않음)</legend>
+        <legend>사진으로 분석하기 (사진은 저장되지 않음)</legend>
         <label>사진 선택
           <input type="file" accept="image/*" capture="environment" id="ocrInput">
         </label>
-        <textarea id="ocrScratch" rows="4" placeholder="AI 분석을 실행하면 사진에서 읽은 문제 텍스트가 여기 표시됩니다. 참고만 하고 아래 항목에 직접 정리해서 입력하세요."></textarea>
         <button type="button" id="aiAnalyzeBtn">AI로 출제 의도 분석 (초안 제안)</button>
         <p id="aiStatus" class="status-text"></p>
       </fieldset>
