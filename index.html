@@ -59,6 +59,12 @@
       <fieldset>
         <legend>문제 분석</legend>
 
+        <label>정답 여부
+          <select id="answerStatus" required>
+            <option value="" disabled selected>선택</option>
+          </select>
+        </label>
+
         <label>핵심 조건 요약
           <input type="text" id="keyConditions" list="keyConditionsSuggestions" placeholder="이 문제에서 결정적인 조건은 무엇인가">
           <datalist id="keyConditionsSuggestions"></datalist>
@@ -86,26 +92,28 @@
           <p id="crHintStatus" class="status-text"></p>
         </div>
 
-        <label>주의할 함정
-          <input type="text" id="trap" list="trapSuggestions" placeholder="자주 하는 착각은 무엇인가">
-          <datalist id="trapSuggestions"></datalist>
-        </label>
+        <div id="failureFields">
+          <label>주의할 함정
+            <input type="text" id="trap" list="trapSuggestions" placeholder="자주 하는 착각은 무엇인가">
+            <datalist id="trapSuggestions"></datalist>
+          </label>
 
-        <label>내가 막힌 지점
-          <input type="text" id="stuckPoint" list="stuckPointSuggestions">
-          <datalist id="stuckPointSuggestions"></datalist>
-        </label>
+          <label>내가 막힌 지점
+            <input type="text" id="stuckPoint" list="stuckPointSuggestions">
+            <datalist id="stuckPointSuggestions"></datalist>
+          </label>
 
-        <label>틀린 이유 (서술)
-          <input type="text" id="failureReason" list="failureReasonSuggestions">
-          <datalist id="failureReasonSuggestions"></datalist>
-        </label>
+          <label>틀린 이유 (서술)
+            <input type="text" id="failureReason" list="failureReasonSuggestions">
+            <datalist id="failureReasonSuggestions"></datalist>
+          </label>
 
-        <label>틀린 이유 분류
-          <select id="failureCategory">
-            <option value="">선택 안 함</option>
-          </select>
-        </label>
+          <label>틀린 이유 분류
+            <select id="failureCategory">
+              <option value="">선택 안 함</option>
+            </select>
+          </label>
+        </div>
 
         <label>다음에 비슷한 문제를 보면 볼 신호
           <input type="text" id="nextSignal" list="nextSignalSuggestions">

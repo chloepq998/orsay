@@ -1,5 +1,5 @@
 import { recordStorage, intentStorage } from './storage.js';
-import { FAILURE_CATEGORIES, UNIT_STRUCTURE } from './constants.js';
+import { ANSWER_STATUSES, FAILURE_CATEGORIES, UNIT_STRUCTURE } from './constants.js';
 import { renderTagCheckboxes, getSelectedTags } from './tagPicker.js';
 import { initAiAnalyze } from './aiAnalyze.js';
 import { fetchConditionHint } from './conditionHint.js';
@@ -21,6 +21,20 @@ export function initRecordForm({ onSaved }) {
     opt.textContent = fc.label;
     failureSelect.appendChild(opt);
   });
+
+  const answerStatusSelect = document.getElementById('answerStatus');
+  ANSWER_STATUSES.forEach(as => {
+    const opt = document.createElement('option');
+    opt.value = as.value;
+    opt.textContent = as.label;
+    answerStatusSelect.appendChild(opt);
+  });
+
+  const failureFields = document.getElementById('failureFields');
+  function updateFailureFieldsVisibility() {
+    failureFields.style.display = answerStatusSelect.value === 'CORRECT' ? 'none' : '';
+  }
+  answerStatusSelect.addEventListener('change', updateFailureFieldsVisibility);
 
   const subjectSelect = document.getElementById('subjectSelect');
   const unitSelect = document.getElementById('unitSelect');
@@ -147,6 +161,7 @@ export function initRecordForm({ onSaved }) {
 
   function resetForm() {
     form.reset();
+    updateFailureFieldsVisibility();
     conditionRoles = [];
     renderCrList();
     unitSelect.innerHTML = '<option value="">과목을 먼저 선택하세요</option>';
@@ -184,6 +199,8 @@ export function initRecordForm({ onSaved }) {
     subjectSelect.value = recordSubject || '';
     populateUnitOptions(recordSubject, recordUnit, recordSubUnit);
     document.getElementById('keyConditions').value = record.keyConditions || '';
+    answerStatusSelect.value = record.answerStatus || '';
+    updateFailureFieldsVisibility();
 
     const firstIntentId = (record.intentPatternIds || [])[0];
     document.getElementById('intentInput').value = firstIntentId ? (intentStorage.getById(firstIntentId)?.label || '') : '';
@@ -218,6 +235,7 @@ export function initRecordForm({ onSaved }) {
       source: document.getElementById('source').value.trim(),
       problemNumber: document.getElementById('problemNumber').value.trim(),
       unit,
+      answerStatus: answerStatusSelect.value || null,
       keyConditions: document.getElementById('keyConditions').value.trim(),
       intentPatternIds,
       firstApproach: document.getElementById('firstApproach').value.trim(),

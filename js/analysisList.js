@@ -1,5 +1,5 @@
 import { recordStorage, intentStorage } from './storage.js';
-import { failureCategoryLabel } from './constants.js';
+import { answerStatusLabel, failureCategoryLabel } from './constants.js';
 import { escapeHtml } from './utils.js';
 
 export function renderRecordList(container, { onEdit, onDelete }) {
@@ -14,7 +14,9 @@ export function renderRecordList(container, { onEdit, onDelete }) {
 
   container.innerHTML = records.map(r => `
     <article class="record-card" data-id="${r.id}">
-      <h3>${escapeHtml(r.source) || '출처 없음'} ${r.problemNumber ? '#' + escapeHtml(r.problemNumber) : ''}</h3>
+      <h3>${escapeHtml(r.source) || '출처 없음'} ${r.problemNumber ? '#' + escapeHtml(r.problemNumber) : ''}
+        ${r.answerStatus ? `<span class="answer-badge answer-${r.answerStatus}">${escapeHtml(answerStatusLabel(r.answerStatus))}</span>` : ''}
+      </h3>
       <p><strong>단원:</strong> ${escapeHtml(r.unit) || '-'}</p>
       <p><strong>출제 의도:</strong> ${(r.intentPatternIds || []).map(intentLabel).filter(Boolean).map(escapeHtml).join(', ') || '-'}</p>
       <p><strong>핵심 조건:</strong> ${escapeHtml(r.keyConditions) || '-'}</p>

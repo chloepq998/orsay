@@ -29,6 +29,16 @@ export const UNIT_STRUCTURE = {
   }
 };
 
+export const ANSWER_STATUSES = [
+  { value: 'CORRECT', label: '맞음' },
+  { value: 'INCORRECT', label: '틀림' },
+  { value: 'PARTIAL', label: '부분 정답' }
+];
+
+export function answerStatusLabel(value) {
+  return ANSWER_STATUSES.find(s => s.value === value)?.label || value;
+}
+
 export const FAILURE_CATEGORIES = [
   { value: 'CONDITION_MISREAD', label: '조건 해석 실수' },
   { value: 'APPROACH_FAIL', label: '첫 발상 실패' },
