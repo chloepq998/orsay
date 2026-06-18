@@ -33,6 +33,30 @@ export const recordStorage = {
   }
 };
 
+export function exportData() {
+  return {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    records: readAll(RECORDS_KEY),
+    intents: readAll(INTENTS_KEY)
+  };
+}
+
+// id가 겹치지 않는 항목만 추가하는 병합 방식 — 기존 기록을 덮어쓰지 않음
+export function importData(data) {
+  const existingRecords = readAll(RECORDS_KEY);
+  const existingRecordIds = new Set(existingRecords.map(r => r.id));
+  const newRecords = (data.records || []).filter(r => r && r.id && !existingRecordIds.has(r.id));
+  writeAll(RECORDS_KEY, [...existingRecords, ...newRecords]);
+
+  const existingIntents = readAll(INTENTS_KEY);
+  const existingIntentIds = new Set(existingIntents.map(p => p.id));
+  const newIntents = (data.intents || []).filter(p => p && p.id && !existingIntentIds.has(p.id));
+  writeAll(INTENTS_KEY, [...existingIntents, ...newIntents]);
+
+  return { addedRecords: newRecords.length, addedIntents: newIntents.length };
+}
+
 export const intentStorage = {
   getAll() {
     return readAll(INTENTS_KEY).sort((a, b) => b.usageCount - a.usageCount);

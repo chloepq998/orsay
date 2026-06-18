@@ -3,6 +3,7 @@ import { recordStorage, intentStorage } from './storage.js';
 import { renderRecordList } from './analysisList.js';
 import { renderStats } from './stats.js';
 import { renderReviewList } from './reviewList.js';
+import { initBackup } from './backup.js';
 
 function renderIntentSuggestions() {
   const datalist = document.getElementById('intentSuggestions');
@@ -68,6 +69,15 @@ const recordForm = initRecordForm({
 });
 
 document.getElementById('statsLimit').addEventListener('change', refreshStats);
+
+initBackup({
+  onImported: () => {
+    renderIntentSuggestions();
+    refreshAnalysis();
+    refreshReview();
+    refreshStats();
+  }
+});
 
 initNav();
 renderIntentSuggestions();

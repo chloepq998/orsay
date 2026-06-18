@@ -503,6 +503,35 @@ h3 {
 .answer-badge.answer-INCORRECT { background: var(--color-danger-bg); color: var(--color-danger); }
 .answer-badge.answer-PARTIAL { background: var(--color-accent-soft); color: var(--color-accent); }
 
+.backup-controls {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.backup-controls button {
+  padding: .45rem .85rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.backup-controls button:hover {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.backup-controls .status-text {
+  margin: 0;
+  flex: 1 1 100%;
+}
+
 .stub-note {
   color: var(--color-text-muted);
   font-style: italic;

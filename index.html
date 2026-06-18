@@ -141,6 +141,12 @@
 
   <section id="screen-analysis" class="screen">
     <h2>분석 결과</h2>
+    <div class="backup-controls">
+      <button type="button" id="exportBtn">백업 내보내기</button>
+      <button type="button" id="importBtn">백업 가져오기</button>
+      <input type="file" id="importFile" accept="application/json" hidden>
+      <p id="backupStatus" class="status-text"></p>
+    </div>
     <div id="recordList"></div>
   </section>
 
