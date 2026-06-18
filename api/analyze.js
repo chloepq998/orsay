@@ -1,3 +1,5 @@
+import { checkOrigin, checkRateLimit } from './_guard.js';
+
 const IDEA_TAGS = [
   '조건 해석형', '구조 관찰형', '발상 전환형', '그래프 해석형',
   '계산 유도형', '함정 회피형', '개념 확인형', '경우 분류형',
@@ -22,6 +24,9 @@ export default async function handler(req, res) {
     res.status(405).json({ error: 'POST 요청만 허용됩니다.' });
     return;
   }
+
+  if (!checkOrigin(req, res)) return;
+  if (!checkRateLimit(req, res)) return;
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {

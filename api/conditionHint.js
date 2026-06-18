@@ -1,8 +1,13 @@
+import { checkOrigin, checkRateLimit } from './_guard.js';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'POST 요청만 허용됩니다.' });
     return;
   }
+
+  if (!checkOrigin(req, res)) return;
+  if (!checkRateLimit(req, res)) return;
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
