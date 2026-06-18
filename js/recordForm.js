@@ -124,11 +124,13 @@ export function initRecordForm({ onSaved }) {
       btn.disabled = true;
       btn.textContent = '분석 중...';
       crHintStatus.textContent = '';
+      crHintStatus.classList.remove('status-error');
       try {
         const role = await fetchConditionHint(conditionRoles[i].condition, document.getElementById('ocrInput'));
         conditionRoles[i].role = role;
         input.value = role;
       } catch (err) {
+        crHintStatus.classList.add('status-error');
         crHintStatus.textContent = '힌트 요청 실패: ' + err.message;
       } finally {
         btn.disabled = false;
@@ -245,8 +247,9 @@ export function initRecordForm({ onSaved }) {
     refreshSuggestions();
 
     const statusEl = document.getElementById('saveStatus');
-    statusEl.textContent = wasEditing ? '수정되었습니다.' : '저장되었습니다.';
-    setTimeout(() => { statusEl.textContent = ''; }, 2000);
+    statusEl.classList.add('status-success');
+    statusEl.textContent = wasEditing ? '✓ 수정되었습니다.' : '✓ 저장되었습니다.';
+    setTimeout(() => { statusEl.textContent = ''; statusEl.classList.remove('status-success'); }, 2000);
 
     if (onSaved) onSaved();
   });

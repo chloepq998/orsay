@@ -15,6 +15,7 @@ export function initAiAnalyze({ fileInput, button, statusEl, onResult }) {
     }
 
     button.disabled = true;
+    statusEl.classList.remove('status-success', 'status-error');
     statusEl.textContent = 'AI가 분석 중입니다...';
 
     try {
@@ -29,8 +30,10 @@ export function initAiAnalyze({ fileInput, button, statusEl, onResult }) {
       if (!response.ok) throw new Error(data.error || 'AI 분석에 실패했습니다.');
 
       onResult(data);
+      statusEl.classList.add('status-success');
       statusEl.textContent = 'AI 분석 초안이 채워졌습니다. 내용을 확인하고 직접 수정한 뒤 저장하세요.';
     } catch (err) {
+      statusEl.classList.add('status-error');
       statusEl.textContent = '분석 실패: ' + err.message;
     } finally {
       button.disabled = false;

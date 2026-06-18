@@ -21,13 +21,14 @@ export function renderRecordList(container, { onEdit, onDelete }) {
       <p><strong>필요한 첫 발상:</strong> ${escapeHtml(r.firstApproach) || '-'}</p>
       ${(r.conditionRoles || []).length ? `
         <p><strong>조건별 역할:</strong></p>
-        <ul>${r.conditionRoles.map(cr => `<li>${escapeHtml(cr.condition)} → ${escapeHtml(cr.role)}</li>`).join('')}</ul>
+        <ul class="cr-readonly-list">${r.conditionRoles.map(cr => `<li>${escapeHtml(cr.condition)} → ${escapeHtml(cr.role)}</li>`).join('')}</ul>
       ` : ''}
       <p><strong>주의할 함정:</strong> ${escapeHtml(r.trap) || '-'}</p>
       <p><strong>내가 막힌 지점:</strong> ${escapeHtml(r.stuckPoint) || '-'}</p>
       <p><strong>틀린 이유:</strong> ${escapeHtml(r.failureReason) || '-'} ${r.failureCategory ? '(' + escapeHtml(failureCategoryLabel(r.failureCategory)) + ')' : ''}</p>
       <p><strong>다음에 볼 신호:</strong> ${escapeHtml(r.nextSignal) || '-'}</p>
-      <p><strong>태그:</strong> ${(r.tags || []).map(escapeHtml).join(', ') || '-'}</p>
+      <p><strong>태그:</strong></p>
+      <div class="tag-pills">${(r.tags || []).length ? r.tags.map(t => `<span class="tag-pill">${escapeHtml(t)}</span>`).join('') : '-'}</div>
       <p><strong>복습 필요:</strong> ${r.needsReview ? '예' : '아니오'}</p>
       <div class="card-actions">
         <button type="button" class="edit-btn">수정</button>
